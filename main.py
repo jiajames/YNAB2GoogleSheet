@@ -83,7 +83,7 @@ def main():
         type=str)
     args = parser.parse_args()
 
-    logging.basicConfig(stream=sys.stdout, level=logging.DEBUG, filemode='a')
+    logging.basicConfig(stream=sys.stdout, level=logging.WARNING, filemode='a')
     if args.log_file:
         logging.getLogger('').addHandler(logging.FileHandler(args.log_file))
 
