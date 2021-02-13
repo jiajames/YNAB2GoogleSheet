@@ -22,7 +22,7 @@ YNAB_TXNS_APPROVED_ONLY = True  # only approved transactions
 
 # Google Sheets
 GSHEET_SPREADSHEET_NAME = 'Budget 2021'
-GSHEET_TXNS_SHEET_NAME = 'YNAB-Transactions'
+GSHEET_TXNS_SHEET_NAME = 'Txns'
 
 # YNAB -> Google Sheets mapping
 YNAB_COLUMNS = ['date', 'account_name', 'payee_name', 'memo', 'category_name', 'amount']
