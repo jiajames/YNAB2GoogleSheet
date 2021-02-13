@@ -129,6 +129,8 @@ def format_ynab_transactions(auth: AuthData, raw_txns: list) -> list:
         for column in YNAB_COLUMNS:
             if column == 'amount':
                 transaction[column] = convert_milliunits_to_dollar_amount(transaction[column])
+            elif column == 'category_name' and transaction[column] == 'Immediate Income SubCategory':
+                transaction[column] = 'Inflows'
 
             relevant_txn_columns.append(str(transaction[column]))
         formatted_txns.append(relevant_txn_columns)
