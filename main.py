@@ -160,6 +160,7 @@ def post_gsheets_transactions(auth: AuthData, transaction_sheet: list) -> None:
     ynab_worksheet = sh.worksheet(GSHEET_TXNS_SHEET_NAME)
 
     sheet_range = "A:Z"
+    ynab_worksheet.clear()
     ynab_worksheet.update(sheet_range, transaction_sheet, value_input_option='USER_ENTERED')
 
 
