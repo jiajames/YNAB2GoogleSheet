@@ -1,6 +1,7 @@
 from os import path
 
 import argparse
+import copy
 import gspread
 import json
 import logging
@@ -121,19 +122,35 @@ def format_ynab_transactions(auth: AuthData, raw_txns: list) -> list:
     header.append('Time Updated: %s' % time.ctime())
 
     formatted_txns = [header]
-    for transaction in raw_txns:
-        if YNAB_TXNS_APPROVED_ONLY and 'approved' in transaction and not transaction['approved']:
+    for txn in raw_txns:
+        if YNAB_TXNS_APPROVED_ONLY and 'approved' in txn and not txn['approved']:
             continue
 
-        relevant_txn_columns = []
-        for column in YNAB_COLUMNS:
-            if column == 'amount':
-                transaction[column] = convert_milliunits_to_dollar_amount(transaction[column])
-            elif column == 'category_name' and transaction[column] == 'Immediate Income SubCategory':
-                transaction[column] = 'Inflows'
+        split_txns = []
+        # duplicate split txns for each subtransaction with amount & category
+        if 'category_name' in txn and str(txn['category_name']).startswith('Split'):
+            for sub_txn in txn['subtransactions']:
+                dup_txn = copy.deepcopy(txn)
+                dup_txn['amount'] = sub_txn['amount']
+                dup_txn['category_name'] = sub_txn['category_name']
+                dup_txn['memo'] = sub_txn['memo']
 
-            relevant_txn_columns.append(str(transaction[column]))
-        formatted_txns.append(relevant_txn_columns)
+                split_txns.append(dup_txn)
+            print(pretty_print_json(split_txns))
+        else:
+            split_txns.append(txn)
+
+        for split_txn in split_txns:
+            relevant_txn_columns = []
+            for column in YNAB_COLUMNS:
+                if column == 'amount':
+                    split_txn[column] = convert_milliunits_to_dollar_amount(split_txn[column])
+                elif column == 'category_name' and split_txn[column] == 'Immediate Income SubCategory':
+                    split_txn[column] = 'Inflows'
+
+                relevant_txn_columns.append(str(split_txn[column]))
+
+            formatted_txns.append(relevant_txn_columns)
 
     return formatted_txns
 
