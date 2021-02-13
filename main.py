@@ -136,7 +136,6 @@ def format_ynab_transactions(auth: AuthData, raw_txns: list) -> list:
                 dup_txn['memo'] = sub_txn['memo']
 
                 split_txns.append(dup_txn)
-            print(pretty_print_json(split_txns))
         else:
             split_txns.append(txn)
 
